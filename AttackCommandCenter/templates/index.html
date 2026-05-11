@@ -1,194 +1,26 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}Home - ACC{% endblock %}
 
 {% block content %}
-<div class="grid grid-cols-12 gap-6">
-    <div class="col-span-12 lg:col-span-3">
-        <div class="glass-card rounded-xl p-5">
-            <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">🎯 ATTACK LIBRARY</h2>
-            <div class="space-y-2">
-                {% for attack in attacks %}
-                <form method="POST" action="/attack/start/{{ attack.id }}" class="attack-form">
-                    <button type="submit" class="w-full text-left px-4 py-3 rounded-lg transition-all duration-200 flex items-center justify-between group" style="background: rgba(26,26,35,0.6); border: 1px solid rgba(0,255,204,0.1);">
-                        <div class="flex items-center gap-3">
-                            <span class="text-xl">{{ attack.icon }}</span>
-                            <div>
-                                <div class="font-mono text-sm font-semibold text-gray-200">{{ attack.name }}</div>
-                                <div class="text-xs text-gray-500">{{ attack.cve }}</div>
-                            </div>
-                        </div>
-                        <div class="text-[#00ffcc] opacity-0 group-hover:opacity-100 transition">▶</div>
-                    </button>
-                </form>
-                {% endfor %}
-            </div>
+<div class="text-center py-12">
+    <h1 class="text-5xl font-bold text-[#00ffcc] font-mono mb-4">ACC</h1>
+    <p class="text-xl text-gray-400 mb-8">Piattaforma di test di sicurezza informatica</p>
 
-            <div class="mt-6 pt-4 border-t border-gray-800">
-                <form method="POST" action="/attack/stop">
-                    <button type="submit" class="w-full bg-[#ff3366]/20 hover:bg-[#ff3366]/30 text-[#ff3366] border border-[#ff3366]/30 rounded-lg py-2 text-sm font-mono transition-all">
-                        ⏹️ STOP ATTACK
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
+    <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <a href="/login" class="glass rounded-xl p-8 text-center hover:scale-105 transition">
+            <div class="text-5xl mb-4">🔓</div>
+            <h2 class="text-2xl font-bold mb-2">ACC</h2>
+            <p class="text-gray-400">Piattaforma volutamente vulnerabile. Metti alla prova le tue capacità di penetration testing.</p>
+            <div class="mt-4 inline-block px-4 py-2 vuln-badge rounded-lg text-sm">SQLi · XSS · IDOR · Path Traversal</div>
+        </a>
 
-    <div class="col-span-12 lg:col-span-9 space-y-6">
-        <div class="glass-card rounded-xl p-5">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">📈 REAL-TIME METRICS</h2>
-                <span class="text-xs text-[#00ffcc] font-mono animate-pulse">● LIVE</span>
-            </div>
-            <canvas id="metricsChart" height="200" style="max-height: 280px;"></canvas>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div class="glass-card rounded-xl p-4 text-center">
-                <div class="text-2xl font-bold font-mono text-[#00ffcc]" id="metric1">0</div>
-                <div class="text-xs text-gray-500 mt-1" id="metric1Label">—</div>
-            </div>
-            <div class="glass-card rounded-xl p-4 text-center">
-                <div class="text-2xl font-bold font-mono text-[#ff3366]" id="metric2">0</div>
-                <div class="text-xs text-gray-500 mt-1" id="metric2Label">—</div>
-            </div>
-            <div class="glass-card rounded-xl p-4 text-center">
-                <div class="text-2xl font-bold font-mono text-[#7c3aed]" id="metric3">0</div>
-                <div class="text-xs text-gray-500 mt-1" id="metric3Label">—</div>
-            </div>
-            <div class="glass-card rounded-xl p-4 text-center">
-                <div class="text-2xl font-bold font-mono text-yellow-500" id="metric4">0</div>
-                <div class="text-xs text-gray-500 mt-1" id="metric4Label">—</div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="glass-card rounded-xl p-5">
-                <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">📋 ATTACK LOGS</h2>
-                <div class="h-64 overflow-y-auto space-y-2 font-mono text-xs scrollbar-thin" id="logContainer">
-                    <div class="text-gray-600 text-center py-4">Ready. Select an attack.</div>
-                </div>
-            </div>
-            <div class="glass-card rounded-xl p-5">
-                <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">🔗 CVE INTEL</h2>
-                <div class="h-64 overflow-y-auto space-y-2 font-mono text-xs scrollbar-thin" id="cveContainer">
-                    {% for cve in latest_cves %}
-                    <div class="border-l-2 border-[#00ffcc]/50 pl-3 py-2 bg-gray-900/30 rounded">
-                        <div class="font-mono text-[#00ffcc] text-xs">{{ cve.cve }}</div>
-                        <div class="text-xs text-gray-300">{{ cve.name }}</div>
-                        <div class="text-[10px] text-gray-500 mt-1">CVSS: {{ cve.cvss }}</div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-
-        <div class="glass-card rounded-xl p-5">
-            <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">📜 ATTACK HISTORY</h2>
-            <div class="overflow-x-auto">
-                <table class="w-full text-xs">
-                    <thead class="text-gray-500 border-b border-gray-800">
-                        <tr><th class="text-left py-2">TIME</th><th class="text-left py-2">ATTACK</th><th class="text-left py-2">CVE</th><th class="text-left py-2">DURATION</th></tr>
-                    </thead>
-                    <tbody id="historyTable">
-                        {% for hist in history %}
-                        <tr class="border-b border-gray-800/50"><td class="py-2 text-gray-500">{{ hist.time }}</td><td class="py-2 font-mono">{{ hist.name }}</td><td class="py-2 text-[#00ffcc]">{{ hist.cve }}</td><td class="py-2 text-gray-500">{{ hist.duration }}</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <a href="/reports" class="glass rounded-xl p-8 text-center hover:scale-105 transition">
+            <div class="text-5xl mb-4">📊</div>
+            <h2 class="text-2xl font-bold mb-2">Attack Reports</h2>
+            <p class="text-gray-400">Report dettagliati degli attacchi informatici più importanti della storia.</p>
+            <div class="mt-4 inline-block px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg text-sm">WannaCry · Log4Shell · Heartbleed · SolarWinds</div>
+        </a>
     </div>
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-    let currentChart = null;
-    let chartData = [];
-
-    window.updateMetricsFromSocket = function(data) {
-        const metrics = data.metrics;
-        const attackType = data.type;
-
-        const labels = {
-            'Denial of Service': ['Packet Rate', 'Server Load', 'Backlog', null],
-            'Distributed DoS': ['Bot Count', 'Intensity', 'Bandwidth', null],
-            'Intercettazione': ['Packets', 'Credentials', null, null],
-            'Masquerading': ['Spoof Rate', 'Spoofed', null, null],
-            'Buffer Overflow': ['Fragments', 'Overlaps', null, null],
-            'Malware/Ransomware': ['Files', 'Progress', null, null],
-            'Malware/Worm': ['Infected', 'Rate', null, null],
-            'Botnet': ['Bots', 'C2 Traffic', null, null]
-        };
-
-        const vals = [];
-        const keys = labels[data.type] || ['Value', null, null, null];
-
-        for (let i = 0; i < 4; i++) {
-            const key = keys[i];
-            if (key === 'Packet Rate') vals[0] = metrics.packet_rate || 0;
-            else if (key === 'Server Load') vals[1] = metrics.server_load || 0;
-            else if (key === 'Bot Count') vals[0] = metrics.bot_count || 0;
-            else if (key === 'Intensity') vals[1] = metrics.attack_intensity || 0;
-            else if (key === 'Files') vals[0] = metrics.files_encrypted || 0;
-            else if (key === 'Progress') vals[1] = metrics.progress || 0;
-            else if (key === 'Infected') vals[0] = metrics.infected_hosts || 0;
-            else if (key === 'Rate') vals[1] = metrics.infection_rate || 0;
-            else if (key === 'Packets') vals[0] = metrics.packets_intercepted || 0;
-            else if (key === 'Credentials') vals[1] = metrics.credentials_captured || 0;
-            else if (key === 'Spoof Rate') vals[0] = metrics.spoof_rate || 0;
-            else if (key === 'Spoofed') vals[1] = metrics.spoofed_packets || 0;
-            else if (key === 'Fragments') vals[0] = metrics.fragments_sent || 0;
-            else if (key === 'Overlaps') vals[1] = metrics.overlapping_fragments || 0;
-
-            if (keys[i]) {
-                document.getElementById(`metric${i+1}Label`).innerHTML = keys[i];
-                if (vals[i] !== undefined) document.getElementById(`metric${i+1}`).innerHTML = typeof vals[i] === 'number' ? vals[i].toLocaleString() : vals[i];
-            }
-        }
-
-        let chartValue = 0;
-        if (metrics.packet_rate) chartValue = metrics.packet_rate / 10000;
-        else if (metrics.bot_count) chartValue = metrics.bot_count / 1000;
-        else if (metrics.progress) chartValue = metrics.progress;
-        else if (metrics.infection_rate) chartValue = metrics.infection_rate;
-        else chartValue = (chartData.length || 0) % 100;
-
-        chartData.push({ time: chartData.length, value: chartValue });
-        if (chartData.length > 60) chartData.shift();
-
-        if (currentChart) {
-            currentChart.data.datasets[0].data = chartData.map(d => d.value);
-            currentChart.data.labels = chartData.map(d => d.time);
-            currentChart.update();
-        }
-
-        if (data.logs && data.logs.length) {
-            const container = document.getElementById('logContainer');
-            data.logs.slice().reverse().forEach(log => {
-                const div = document.createElement('div');
-                div.className = 'border-b border-gray-800/50 py-2 text-gray-400 text-xs';
-                div.innerHTML = `<span class="text-gray-600">[${log.timestamp.slice(11,19)}]</span> ${log.message}`;
-                container.prepend(div);
-                if (container.children.length > 30) container.removeChild(container.lastChild);
-            });
-        }
-    };
-
-    window.onAttackComplete = function(data) {
-        const container = document.getElementById('logContainer');
-        const div = document.createElement('div');
-        div.className = 'border-b border-gray-800/50 py-2 text-green-500 text-xs';
-        div.innerHTML = `✅ Attack ${data.attack} completed`;
-        container.prepend(div);
-    };
-
-    const ctx = document.getElementById('metricsChart').getContext('2d');
-    currentChart = new Chart(ctx, {
-        type: 'line',
-        data: { labels: [], datasets: [{ label: 'Attack Intensity', data: [], borderColor: '#00ffcc', backgroundColor: 'rgba(0,255,204,0.05)', borderWidth: 2, fill: true, tension: 0.4 }] },
-        options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: '#888' } } }, scales: { y: { grid: { color: '#1a1a1a' }, ticks: { color: '#888' } }, x: { grid: { color: '#1a1a1a' }, ticks: { color: '#888' } } } }
-    });
-</script>
 {% endblock %}

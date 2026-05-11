@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ThreatShield SOC</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+
+<body class="bg-black text-green-400 font-mono">
+
+<div class="p-6">
+
+    <h1 class="text-3xl text-cyan-400 mb-6">
+        🛡️ ThreatShield SOC Dashboard
+    </h1>
+
+    <div class="grid grid-cols-3 gap-6">
+
+        <!-- LOGS -->
+        <div class="bg-gray-900 p-4 rounded">
+            <h2 class="text-cyan-300 mb-2">📡 Logs</h2>
+            <div id="logs" class="h-96 overflow-auto text-xs"></div>
+        </div>
+
+        <!-- ALERTS -->
+        <div class="bg-gray-900 p-4 rounded border border-red-500">
+            <h2 class="text-red-400 mb-2">⚠️ Alerts</h2>
+            <div id="alerts"></div>
+        </div>
+
+        <!-- CVE INTEL -->
+        <div class="bg-gray-900 p-4 rounded border border-yellow-500">
+            <h2 class="text-yellow-400 mb-2">🧠 CVE Intelligence</h2>
+            <div id="cves" class="text-sm"></div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+const socket = io();
+
+socket.on("update", data => {
+
+    // LOGS
+    document.getElementById("logs").innerHTML =
+        data.logs.map(l => `<p>${JSON.stringify(l)}</p>`).join("");
+
+    // ALERTS
+    document.getElementById("alerts").innerHTML =
+        data.alerts.map(a =>
+            `<p class="text-red-400">🚨 ${a.type} from ${a.ip} (${a.count})</p>`
+        ).join("");
+
+    // CVES
+    document.getElementById("cves").innerHTML =
+        data.cves.map(c =>
+            `<p><span class="text-yellow-300">${c.id}</span><br>${c.summary.slice(0,80)}...</p><hr>`
+        ).join("");
+});
+</script>
+
+</body>
+</html>

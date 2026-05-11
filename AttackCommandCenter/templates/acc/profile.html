@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - ACC{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="glass rounded-xl p-8">
+        <h2 class="text-2xl font-bold mb-6">👤 Profilo Utente</h2>
+
+        <div class="space-y-4">
+            <div>
+                <label class="text-gray-400 text-sm">Username</label>
+                <div class="bg-black/50 rounded-lg px-4 py-2 font-mono">{{ user.username }}</div>
+            </div>
+            <div>
+                <label class="text-gray-400 text-sm">Email</label>
+                <div class="bg-black/50 rounded-lg px-4 py-2 font-mono">{{ user.email }}</div>
+            </div>
+            <div>
+                <label class="text-gray-400 text-sm">Credit Card (SENSIBILE)</label>
+                <div class="bg-black/50 rounded-lg px-4 py-2 font-mono text-[#ff3366]">{{ user.credit_card }}</div>
+            </div>
+            <div>
+                <label class="text-gray-400 text-sm">Role</label>
+                <div class="bg-black/50 rounded-lg px-4 py-2 font-mono">
+                    {% if user.role == 'admin' %}
+                    <span class="text-[#ff3366]">Administrator</span>
+                    {% else %}
+                    <span class="text-gray-400">User</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-6 text-sm text-gray-500">
+            💡 <strong class="text-[#ff3366]">VULNERABILITÀ IDOR (Insecure Direct Object Reference)</strong><br>
+            Prova a cambiare l'ID nell'URL: /profile/1, /profile/2, /profile/3...
+        </div>
+    </div>
+</div>
+{% endblock %}

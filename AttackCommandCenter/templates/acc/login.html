@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Login - ACC{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto mt-12">
+    <div class="glass rounded-xl p-8">
+        <h2 class="text-2xl font-bold mb-6 text-center">🔐 Login</h2>
+
+        {% if error %}
+        <div class="bg-red-500/20 border border-red-500/50 rounded-lg p-3 mb-4 text-red-400 text-sm">
+            ⚠️ {{ error }}
+        </div>
+        {% endif %}
+
+        <div class="vuln-badge rounded-lg p-3 mb-6 text-xs">
+            💡 <strong class="text-[#ff3366]">VULNERABILITÀ SQL INJECTION</strong><br>
+            Prova: <code class="bg-black/50 px-1">' OR '1'='1' -- </code> come username
+        </div>
+
+        <form method="POST" action="/do_login">
+            <div class="mb-4">
+                <label class="block text-gray-400 text-sm mb-2">Username</label>
+                <input type="text" name="username" class="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-2 focus:border-[#00ffcc] focus:outline-none" placeholder="admin">
+            </div>
+            <div class="mb-6">
+                <label class="block text-gray-400 text-sm mb-2">Password</label>
+                <input type="password" name="password" class="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-2 focus:border-[#00ffcc] focus:outline-none">
+            </div>
+            <button type="submit" class="w-full bg-[#00ffcc] text-black font-bold py-2 rounded-lg hover:bg-[#00ddbb] transition">
+                Accedi
+            </button>
+        </form>
+
+        <div class="mt-4 text-center text-xs text-gray-500">
+            Test credentials: admin / admin123
+        </div>
+    </div>
+</div>
+{% endblock %}

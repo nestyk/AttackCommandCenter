@@ -3,70 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CACC - {% block title %}Cyber Attack Command Center{% endblock %}</title>
+    <title>{% block title %}ACC{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { background: linear-gradient(135deg, #0a0a0a 0%, #0f0f1a 100%); }
-        .glass-card { background: rgba(26, 26, 35, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(0, 255, 204, 0.15); }
-        .glass-card:hover { border-color: rgba(0, 255, 204, 0.4); }
-        .scrollbar-thin::-webkit-scrollbar { width: 6px; }
-        .scrollbar-thin::-webkit-scrollbar-track { background: #1a1a1a; }
-        .scrollbar-thin::-webkit-scrollbar-thumb { background: #00ffcc; border-radius: 3px; }
-        @keyframes pulse-glow { 0%,100% { opacity: 1; } 50% { opacity: 0.5; text-shadow: 0 0 5px #00ffcc; } }
-        .animate-pulse-glow { animation: pulse-glow 1s ease-in-out infinite; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+        }
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .glass {
+            background: rgba(26, 26, 35, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 204, 0.15);
+        }
+        .glass:hover {
+            border-color: rgba(0, 255, 204, 0.4);
+        }
+        .vuln-badge {
+            background: rgba(255, 51, 102, 0.2);
+            color: #ff3366;
+            border: 1px solid rgba(255, 51, 102, 0.3);
+        }
     </style>
-    {% block extra_head %}{% endblock %}
 </head>
-<body class="text-gray-200 font-sans">
-    <div class="min-h-screen">
-        <header class="border-b border-primary/30 bg-black/80 backdrop-blur-md sticky top-0 z-50">
-            <div class="container mx-auto px-6 py-4">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <h1 class="text-2xl font-bold tracking-wider text-[#00ffcc] font-mono">CACC</h1>
-                        <p class="text-xs text-gray-500 tracking-wide">CYBER ATTACK COMMAND CENTER</p>
-                    </div>
-                    <div class="flex gap-6 text-sm font-mono">
-                        <div class="text-center">
-                            <div class="text-gray-500 text-xs">STATUS</div>
-                            <div class="text-[#00ffcc]" id="globalStatus">STANDBY</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-gray-500 text-xs">ACTIVE ATTACK</div>
-                            <div class="text-[#ff3366]" id="activeAttackName">—</div>
-                        </div>
+<body class="text-gray-200">
+    <nav class="border-b border-[#00ffcc]/30 bg-black/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-8">
+                    <a href="/" class="text-xl font-bold tracking-wider text-[#00ffcc] font-mono">ACC</a>
+                    <div class="flex gap-4">
+                        <a href="/acc" class="hover:text-[#00ffcc] transition">🔓 ACC</a>
+                        <a href="/reports" class="hover:text-[#00ffcc] transition">📊 Attack Reports</a>
                     </div>
                 </div>
+                <div>
+                    {% if session.username %}
+                        <span class="text-sm text-gray-400">👤 {{ session.username }}</span>
+                        <a href="/logout" class="ml-4 text-sm text-[#ff3366] hover:underline">Logout</a>
+                    {% else %}
+                        <a href="/login" class="text-sm text-[#00ffcc] hover:underline">Login</a>
+                    {% endif %}
+                </div>
             </div>
-        </header>
+        </div>
+    </nav>
 
-        <main class="container mx-auto px-6 py-8">
-            {% block content %}{% endblock %}
-        </main>
-    </div>
-
-    <script>
-        const socket = io();
-
-        socket.on('connect', function() {
-            console.log('Connected to CACC server');
-        });
-
-        socket.on('attack_update', function(data) {
-            if (window.updateMetricsFromSocket) {
-                window.updateMetricsFromSocket(data);
-            }
-        });
-
-        socket.on('attack_complete', function(data) {
-            document.getElementById('globalStatus').innerHTML = 'STANDBY';
-            document.getElementById('activeAttackName').innerHTML = '—';
-            if (window.onAttackComplete) window.onAttackComplete(data);
-        });
-    </script>
-    {% block scripts %}{% endblock %}
+    <main class="container mx-auto px-6 py-8">
+        {% block content %}{% endblock %}
+    </main>
 </body>
 </html>

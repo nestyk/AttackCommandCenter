@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}File Viewer - ACC{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="glass rounded-xl p-8">
+        <h2 class="text-2xl font-bold mb-4">📁 File Viewer</h2>
+
+        <div class="vuln-badge rounded-lg p-3 mb-4 text-xs">
+            💡 <strong class="text-[#ff3366]">VULNERABILITÀ PATH TRAVERSAL</strong><br>
+            Prova: <code class="bg-black/50 px-1">?file=../../../../etc/passwd</code> o <code class="bg-black/50 px-1">?file=app.py</code>
+        </div>
+
+        <div class="bg-black/50 rounded-lg p-4 mb-4">
+            <label class="text-gray-400 text-sm">File selezionato</label>
+            <div class="font-mono text-[#00ffcc] break-all">data/{{ filename }}</div>
+        </div>
+
+        <div class="bg-black/50 rounded-lg p-4">
+            <label class="text-gray-400 text-sm mb-2 block">Contenuto</label>
+            <pre class="font-mono text-xs text-gray-300 whitespace-pre-wrap overflow-x-auto">{{ content or error }}</pre>
+        </div>
+
+        <div class="mt-4 text-sm text-gray-500">
+            💡 Esempi: documenti.txt, ../app.py, ../../etc/passwd
+        </div>
+    </div>
+</div>
+{% endblock %}
