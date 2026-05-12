@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, abort
 from flask_sqlalchemy import SQLAlchemy
-import os
+from sqlalchemy import text
+
 
 app = Flask(__name__)
 app.secret_key = 'SECRETKEY123'
@@ -212,20 +213,39 @@ def do_login():
     password = request.form.get('password')
 
     query = f"SELECT * FROM user WHERE username = '{username}' AND password = '{password}'"
+    print(query)
     try:
-        result = db.session.execute(query).first()
+        result = db.session.execute(text(query)).first()
         if result:
             user = User.query.get(result[0])
             session['user_id'] = user.id
             session['username'] = user.username
             session['role'] = user.role
             return redirect(url_for('dashboard'))
-    except:
-        pass
+    except Exception as e:
+        print(e)
+
 
     return render_template('acc/login.html', error="Credenziali errate")
 
+#DEBUG
+@app.route('/debug_check')
+def debug_check():
+    from sqlalchemy import inspect, text
+    inspector = inspect(db.engine)
+    tables = inspector.get_table_names()
 
+    result = f"Tabelle nel database: {tables}<br><br>"
+
+    if 'user' in tables:
+        users = db.session.execute(text("SELECT * FROM user")).fetchall()
+        result += f"Utenti trovati: {len(users)}<br>"
+        for u in users:
+            result += f"ID: {u[0]}, Username: {u[1]}, Password: {u[2]}<br>"
+    else:
+        result += "Tabella 'user' non trovata! Devi creare il database."
+
+    return result
 @app.route('/dashboard')
 def dashboard():
     if 'user_id' not in session:
