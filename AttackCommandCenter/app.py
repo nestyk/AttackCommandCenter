@@ -164,7 +164,7 @@ def acc_profile(user_id):
         return redirect(url_for('acc_login'))
 
     query = f"SELECT * FROM user WHERE id = {user_id}"
-    user = db.session.execute(query).first()
+    user = db.session.execute(text(query)).first()
     if user:
         user_data = User.query.get(user[0])
         return render_template('acc/profile.html', user=user_data)
@@ -259,13 +259,15 @@ def profile(user_id):
         return redirect(url_for('login_page'))
 
     query = f"SELECT * FROM user WHERE id = {user_id}"
-    user = db.session.execute(query).first()
+    user = db.session.execute(text(query)).first()
     if user:
         user_data = User.query.get(user[0])
         return render_template('acc/profile.html', user=user_data)
     return "Utente non trovato", 404
 
-
+@app.route('/404', methods=['GET'])
+def notfound_page():
+    return render_template('acc/404.html')
 @app.route('/comments', methods=['GET', 'POST'])
 def comments():
     if 'user_id' not in session:
