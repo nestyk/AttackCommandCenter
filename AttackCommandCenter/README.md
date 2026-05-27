@@ -1,4 +1,4 @@
-# Cybersecurity Training Lab - Vulnerable Web Application
+# PentestLab - Vulnerable Web Application
 
 ## 📋 Description
 
@@ -76,11 +76,12 @@ The application will be available at http://localhost:5000
 This software is provided exclusively for educational purposes. The author is not responsible for any misuse or damage caused by this application. Use only in authorized testing environments.
 
 📚 Useful Resources
-OWASP Top 10
 
-PortSwigger Web Security Academy
+[OWASP Top 10](https://owasp.org/www-project-top-ten/)
 
-VulnHub
+[PortSwigger Web Security Academy](https://portswigger.net/web-security)
+
+[VulnHub](https://www.vulnhub.com/)
 
 📄 License
 This project is distributed for educational purposes.

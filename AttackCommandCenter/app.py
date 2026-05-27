@@ -56,10 +56,11 @@ with app.app_context():
         db.session.commit()
 
 
+
+#Routes
 @app.route('/')
 def index():
     return render_template('index.html')
-
 
 @app.route('/acc')
 def acc_index():
@@ -70,13 +71,11 @@ def acc_index():
 def acc_login():
     return render_template('acc/login.html')
 
-
-@app.route('/acc/dashboard')
-def acc_dashboard():
+@app.route('/dashboard')
+def dashboard():
     if 'user_id' not in session:
-        return redirect(url_for('acc_login'))
+        return redirect(url_for('login_page'))
     return render_template('acc/dashboard.html')
-
 
 @app.route('/acc/profile/<int:user_id>')
 def acc_profile(user_id):
@@ -166,11 +165,7 @@ def debug_check():
         result += "Tabella 'user' non trovata! Devi creare il database."
 
     return result
-@app.route('/dashboard')
-def dashboard():
-    if 'user_id' not in session:
-        return redirect(url_for('login_page'))
-    return render_template('acc/dashboard.html')
+
 
 
 

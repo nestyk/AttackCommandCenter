@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Login - ACC{% endblock %}
+{% block title %}Login - PentestLab{% endblock %}
 
 {% block content %}
 <div class="max-w-md mx-auto mt-12">
@@ -15,7 +15,7 @@
 
         <div class="vuln-badge rounded-lg p-3 mb-6 text-xs">
             💡 <strong class="text-[#ff3366]">VULNERABILITÀ SQL INJECTION</strong><br>
-            Prova: <code class="bg-black/50 px-1">' OR '1'='1' -- </code> come username
+            Prova: <code class="bg-black/50 px-1">' OR '1'='1 -- </code> come username
         </div>
 
         <form method="POST" action="/do_login">

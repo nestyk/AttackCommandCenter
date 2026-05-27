@@ -1,9 +1,15 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
+
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}ACC{% endblock %}</title>
+    <title>{% block title %}PentestLab{% endblock %}</title>
+    <link rel="icon"
+          type="image/x-icon"
+          href="{{ url_for('static', filename='favicon.ico') }}">
     <script src="https://cdn.tailwindcss.com"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -35,12 +41,10 @@
         <div class="container mx-auto px-6 py-4">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-8">
-                    <a href="/" class="text-xl font-bold tracking-wider text-[#00ffcc] font-mono">ACC</a>
+                    <a href="/" class="text-xl font-bold tracking-wider text-[#00ffcc] font-mono">PentestLab</a>
                     <div class="flex gap-4">
-                        <a href="/acc" class="hover:text-[#00ffcc] transition">🔓 ACC</a>
-                        <a href="/reports" class="hover:text-[#00ffcc] transition">📊 Attack Reports</a>
-                        <a href="/presentation" class="text-gray-400 hover:text-[#a078ff] transition">Presentazione</a>
-                    </div>
+                        <a href="/dashboard" class="hover:text-[#00ffcc] transition">🔓 Dashboard</a>
+                        </div>
                 </div>
                 <div>
                     {% if session.username %}
