@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Home - PentestLab{% endblock %}
+
+{% block content %}
+<div class="text-center py-12">
+    <h1 class="text-5xl font-bold text-[#00ffcc] font-mono mb-4">Pentest Lab</h1>
+    <p class="text-xl text-gray-400 mb-8">Piattaforma di test di sicurezza informatica</p>
+
+    <div class="flex justify-center">
+    <a href="/dashboard"
+       class="glass rounded-xl p-8 text-center hover:scale-105 transition w-full max-w-xl">
+
+        <div class="text-5xl mb-4">🔓</div>
+
+        <h2 class="text-2xl font-bold mb-2">
+            Dashboard
+        </h2>
+
+        <p class="text-gray-400">
+            Piattaforma volutamente vulnerabile.
+            Metti alla prova le tue capacità di penetration testing.
+        </p>
+
+        <div class="mt-4 inline-block px-4 py-2 vuln-badge rounded-lg text-sm">
+            SQLi • XSS • IDOR • Path Traversal
+        </div>
+    </a>
+</div>
+</div>
+{% endblock %}
